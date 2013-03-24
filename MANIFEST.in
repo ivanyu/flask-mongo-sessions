@@ -1,0 +1,3 @@
+include *.py README.md LICENSE
+recursive-include flask_mongo_sessions *.py
+global-exclude *.pyc
