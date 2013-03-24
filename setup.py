@@ -16,7 +16,7 @@ setup(
     author_email='ivan0yurchenko@gmail.com',
     description='Server-side sessions for Flask with MongoDB',
     long_description=__doc__,
-    py_modules=['flask_mongo_sessions'],
+    py_modules=['flask_mongo_sessions', 'flask_mongo_sessions.tests'],
     zip_safe=False,
     include_package_data=True,
     platforms='any',
@@ -33,5 +33,5 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    test_suite='tests',
+    test_suite='flask_mongo_sessions.tests',
 )
