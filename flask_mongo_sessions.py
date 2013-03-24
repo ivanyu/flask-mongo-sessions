@@ -35,7 +35,7 @@ class MongoDBSessionInterface(SessionInterface):
             sid = self.__generate_sid()
             return self.session_class(sid=sid)
 
-        doc = self._mongo.db[self._collection_name].find_one({'_id': sid})
+        doc = self.__get_collection().find_one({'_id': sid})
         if doc:
             session = self.session_class(initial=doc['d'], sid=sid)
         else:
@@ -48,14 +48,14 @@ class MongoDBSessionInterface(SessionInterface):
         cookie_exp = self.get_expiration_time(app, session)
 
         if not session:
-            self._mongo.db[self._collection_name].remove({'_id': session.sid})
+            self.__get_collection().remove({'_id': session.sid})
             if session.modified:
                 response.delete_cookie(key=app.session_cookie_name,
                                        path=cookie_path,
                                        domain=cookie_domain)
             return
 
-        self._mongo.db[self._collection_name].update(
+        self.__get_collection().update(
             {'_id': session.sid},
             {'$set': {
                 'd': session.pickle(),
@@ -70,6 +70,9 @@ class MongoDBSessionInterface(SessionInterface):
                             #domain=cookie_domain,
                             secure=self.get_cookie_secure(app),
                             httponly=self.get_cookie_httponly(app))
+
+    def __get_collection(self):
+        return self._mongo.db[self._collection_name]
 
     def __generate_sid(self):
         return uuid.uuid4().hex
