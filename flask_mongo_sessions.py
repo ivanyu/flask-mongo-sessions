@@ -39,6 +39,9 @@ class MongoDBSessionInterface(SessionInterface):
         if doc:
             session = self.session_class(initial=doc['d'], sid=sid)
         else:
+            # If the SID doesn't exist - create a new one to avoid possibility
+            # of user-generated SID with invalid format (e.g. "abc123").
+            sid = self.__generate_sid()
             session = self.session_class(sid=sid)
         return session
 
