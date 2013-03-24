@@ -38,7 +38,9 @@ class MongoDBSessionInterface(SessionInterface):
 
         doc = self.__get_collection().find_one({'_id': sid})
         # Check if exists and not expired.
-        if doc and doc['exp'] > datetime.utcnow():
+        # It's ok to remove tzinfo here, because utcnow() returns UTC time,
+        # despite it's in naive form (without tzinfo).
+        if doc and doc['exp'].replace(tzinfo=None) > datetime.utcnow():
             session = self.session_class(initial=doc['d'], sid=sid)
         else:
             # If the SID doesn't exist - create a new one to avoid possibility
@@ -48,21 +50,22 @@ class MongoDBSessionInterface(SessionInterface):
         return session
 
     def save_session(self, app, session, response):
-        cookie_domain = self.get_cookie_domain(app)
-        cookie_path = self.get_cookie_path(app)
+        # cookie_domain = self.get_cookie_domain(app)
+        # cookie_path = self.get_cookie_path(app)
         cookie_exp = self.get_expiration_time(app, session)
 
         if not session:
             self.__get_collection().remove({'_id': session.sid})
             if session.modified:
                 response.delete_cookie(key=app.session_cookie_name,
-                                       path=cookie_path,
-                                       domain=cookie_domain)
+                                       #path=cookie_path,
+                                       #domain=cookie_domain
+                                       )
             return
 
         # If session isn't permanent if will be considered valid for 1 day
         # (but not cookie which will be deleted by browser after exit).
-        session_exp = cookie_exp or timedelta(days=1)
+        session_exp = cookie_exp or datetime.utcnow()+timedelta(days=1)
         self.__get_collection().update(
             {'_id': session.sid},
             {'$set': {
