@@ -1,6 +1,7 @@
 import pickle
 import uuid
 from datetime import datetime
+from datetime import timedelta
 
 from werkzeug.datastructures import CallbackDict
 from flask.sessions import SessionMixin
@@ -36,7 +37,8 @@ class MongoDBSessionInterface(SessionInterface):
             return self.session_class(sid=sid)
 
         doc = self.__get_collection().find_one({'_id': sid})
-        if doc:
+        # Check if exists and not expired.
+        if doc and doc['exp'] > datetime.utcnow():
             session = self.session_class(initial=doc['d'], sid=sid)
         else:
             # If the SID doesn't exist - create a new one to avoid possibility
@@ -58,11 +60,14 @@ class MongoDBSessionInterface(SessionInterface):
                                        domain=cookie_domain)
             return
 
+        # If session isn't permanent if will be considered valid for 1 day
+        # (but not cookie which will be deleted by browser after exit).
+        session_exp = cookie_exp or timedelta(days=1)
         self.__get_collection().update(
             {'_id': session.sid},
             {'$set': {
                 'd': session.pickle(),
-                'cr': datetime.utcnow(),
+                'exp': session_exp,
             }},
             upsert=True)
 
