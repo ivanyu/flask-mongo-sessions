@@ -11,7 +11,7 @@ app = Flask('testapp')
 app.config['SERVER_NAME'] = 'localhost:5000'
 app.config['MONGO_DBNAME'] = '__test-db__'
 mongo = PyMongo(app)
-app.session_interface = MongoDBSessionInterface(mongo, 'sessions')
+app.session_interface = MongoDBSessionInterface(app, mongo, 'sessions')
 
 @app.route("/set")
 def set_session():

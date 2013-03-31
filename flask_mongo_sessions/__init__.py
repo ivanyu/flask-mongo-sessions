@@ -26,9 +26,20 @@ class MongoDBSession(CallbackDict, SessionMixin):
 class MongoDBSessionInterface(SessionInterface):
     session_class = MongoDBSession
 
-    def __init__(self, mongo, collection_name):
+    def __init__(self, app, mongo, collection_name):
         self._mongo = mongo
         self._collection_name = collection_name
+
+        if app is not None:
+            self.app = app
+            self.init_app(app)
+        else:
+            self.app = None
+
+    def init_app(self, app):
+        if not hasattr(app, 'extensions'):
+            app.extensions = {}
+        app.extensions['mongodb-session'] = self
 
     def open_session(self, app, request):
         sid = request.cookies.get(app.session_cookie_name)
