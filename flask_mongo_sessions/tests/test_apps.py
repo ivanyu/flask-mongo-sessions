@@ -18,8 +18,10 @@ def create_app(db_interface):
             app.session_interface = MongoDBSessionInterface(
                 app, mongo.db, 'sessions')
     elif db_interface == 'mongoengine':
-        return None
         app.config['MONGODB_DB'] = '__test-db__'
+        mongo = MongoEngine(app)
+        app.session_interface = MongoDBSessionInterface(
+            app, mongo.connection[app.config['MONGODB_DB']], 'sessions')
 
     @app.route("/set")
     def set_session():
