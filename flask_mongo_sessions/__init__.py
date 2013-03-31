@@ -39,7 +39,7 @@ class MongoDBSessionInterface(SessionInterface):
     def init_app(self, app):
         if not hasattr(app, 'extensions'):
             app.extensions = {}
-        app.extensions['mongodb-session'] = self
+        app.extensions['mongodb-sessions'] = self
 
     def open_session(self, app, request):
         sid = request.cookies.get(app.session_cookie_name)
