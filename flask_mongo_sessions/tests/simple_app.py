@@ -11,7 +11,9 @@ def create_app():
     app.config['SERVER_NAME'] = 'localhost:5000'
     app.config['MONGO_DBNAME'] = '__test-db__'
     mongo = PyMongo(app)
-    app.session_interface = MongoDBSessionInterface(app, mongo, 'sessions')
+    with app.app_context():
+        app.session_interface = MongoDBSessionInterface(
+            app, mongo.db, 'sessions')
 
     @app.route("/set")
     def set_session():

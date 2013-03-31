@@ -26,8 +26,8 @@ class MongoDBSession(CallbackDict, SessionMixin):
 class MongoDBSessionInterface(SessionInterface):
     session_class = MongoDBSession
 
-    def __init__(self, app, mongo, collection_name):
-        self._mongo = mongo
+    def __init__(self, app, db, collection_name):
+        self._db = db
         self._collection_name = collection_name
 
         if app is not None:
@@ -94,7 +94,7 @@ class MongoDBSessionInterface(SessionInterface):
                             httponly=self.get_cookie_httponly(app))
 
     def __get_collection(self):
-        return self._mongo.db[self._collection_name]
+        return self._db[self._collection_name]
 
     def __generate_sid(self):
         return uuid.uuid4().hex
