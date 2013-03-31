@@ -84,11 +84,82 @@ class ExpirationCase(BaseTestCase):
                               sleep_period=3)
 
 
+class MultipleAppsCase(unittest.TestCase):
+    def setUp(self):
+        self.app1 = test_apps.create_app(
+            self._get_db_interface(), 'testapp1', '__test-db__')
+        self.app2 = test_apps.create_app(
+            self._get_db_interface(), 'testapp2', '__test-db__')
+        self.app3 = test_apps.create_app(
+            self._get_db_interface(), 'testapp3', '__another-test-db__')
+        self.client1 = self.app1.test_client()
+        self.client2 = self.app2.test_client()
+        self.client3 = self.app3.test_client()
+
+    def test_multiapp(self):
+        sid1 = uuid.uuid4().hex
+        sid2 = uuid.uuid4().hex
+        sid3 = uuid.uuid4().hex
+
+        test_data1 = "This_is_a_test_data_for_app_1."
+        test_data2 = "This_is_a_test_data_for_app_2."
+        test_data3 = "This_is_a_test_data_for_app_3."
+        self.client1.set_cookie(self.app1.config['SERVER_NAME'],
+                                key='session',
+                                value=sid1)
+        self.client2.set_cookie(self.app2.config['SERVER_NAME'],
+                                key='session',
+                                value=sid2)
+        self.client3.set_cookie(self.app3.config['SERVER_NAME'],
+                                key='session',
+                                value=sid3)
+        r1 = self.client1.get('/set?d='+test_data1)
+        r2 = self.client2.get('/set?d='+test_data2)
+        r3 = self.client3.get('/set?d='+test_data3)
+        cookies1 = [h[1] for h in r1.headers
+                    if h[0] == 'Set-Cookie' and h[1].startswith('session=')]
+        cookies2 = [h[1] for h in r2.headers
+                    if h[0] == 'Set-Cookie' and h[1].startswith('session=')]
+        cookies3 = [h[1] for h in r3.headers
+                    if h[0] == 'Set-Cookie' and h[1].startswith('session=')]
+        session1 = next(iter(cookies1), None)
+        session2 = next(iter(cookies2), None)
+        session3 = next(iter(cookies3), None)
+        self.assertTrue(session1)
+        self.assertTrue(session2)
+        self.assertTrue(session3)
+        m = re.search('session=(\w{32})', session1)
+        self.assertTrue(m)
+        returned_sid1 = m.group(1)
+        m = re.search('session=(\w{32})', session2)
+        self.assertTrue(m)
+        returned_sid2 = m.group(1)
+        m = re.search('session=(\w{32})', session3)
+        self.assertTrue(m)
+        returned_sid3 = m.group(1)
+
+        self.client1.set_cookie(self.app1.config['SERVER_NAME'],
+                                key='session',
+                                value=returned_sid1)
+        self.client2.set_cookie(self.app2.config['SERVER_NAME'],
+                                key='session',
+                                value=returned_sid2)
+        self.client3.set_cookie(self.app3.config['SERVER_NAME'],
+                                key='session',
+                                value=returned_sid3)
+        r1 = self.client1.get('/get')
+        r2 = self.client2.get('/get')
+        r3 = self.client3.get('/get')
+        self.assertEquals(r1.data, test_data1)
+        self.assertEquals(r2.data, test_data2)
+        self.assertEquals(r3.data, test_data3)
+
+
 def suite():
     test_loader = unittest.TestLoader()
     suite = test_loader.suiteClass()
     for interface in ['mongoengine', 'pymongo']:
-        for base in [ZeroConfCase, ExpirationCase]:
+        for base in [ZeroConfCase, ExpirationCase, MultipleAppsCase]:
             def wrapper_get_db_interface(i):
                 return lambda self: i
             name = '{0}_{1}'.format(base.__name__, interface)

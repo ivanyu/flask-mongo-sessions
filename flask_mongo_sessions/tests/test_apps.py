@@ -7,18 +7,18 @@ from flask.ext.mongoengine import MongoEngine
 
 from flask_mongo_sessions import MongoDBSessionInterface
 
-def create_app(db_interface):
-    app = Flask('testapp')
+def create_app(db_interface, app_name='testapp', db_name='__test-db__'):
+    app = Flask(app_name)
     app.config['SERVER_NAME'] = 'localhost:5000'
 
     if db_interface == 'pymongo':
-        app.config['MONGO_DBNAME'] = '__test-db__'
+        app.config['MONGO_DBNAME'] = db_name
         mongo = PyMongo(app)
         with app.app_context():
             app.session_interface = MongoDBSessionInterface(
                 app, mongo.db, 'sessions')
     elif db_interface == 'mongoengine':
-        app.config['MONGODB_DB'] = '__test-db__'
+        app.config['MONGODB_DB'] = db_name
         mongo = MongoEngine(app)
         app.session_interface = MongoDBSessionInterface(
             app, mongo.connection[app.config['MONGODB_DB']], 'sessions')
