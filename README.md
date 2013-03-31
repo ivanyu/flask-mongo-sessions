@@ -3,6 +3,8 @@ flask-mongo-sessions
 
 Server-side sessions for Flask with MongoDB.
 
+Works with Python 2.5, 2.6 and 2.7
+
 Installation
 ------------
 
