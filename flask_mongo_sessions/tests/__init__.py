@@ -11,13 +11,13 @@ import simple_app
 
 class ZeroConfCase(unittest.TestCase):
     def setUp(self):
-        self.app = simple_app.app   
+        self.app = simple_app.create_app()   
         self.client = self.app.test_client()
-        self.mongo = simple_app.mongo
 
     def tearDown(self):
-        with self.app.app_context():
-            self.mongo.db.command('dropDatabase')
+        # with self.app.app_context():
+        #     self.app.mongo.db.command('dropDatabase')
+        pass
 
     def _test_with_sid(self, sid):
         test_data = "This_is_a_test_data."
@@ -59,14 +59,14 @@ class ZeroConfCase(unittest.TestCase):
 
 class ExpirationCase(unittest.TestCase):
     def setUp(self):
-        self.app = simple_app.app   
+        self.app = simple_app.create_app()   
         self.client = self.app.test_client()
-        self.mongo = simple_app.mongo
         self.app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=5)
 
     def tearDown(self):
-        with self.app.app_context():
-            self.mongo.db.command('dropDatabase')
+        # with self.app.app_context():
+        #     self.app.mongo.db.command('dropDatabase')
+        pass
 
     def _test_with_sleep(self, data_in, data_out, sleep_period):
         r = self.client.get('/setpermanent?d='+data_in)
