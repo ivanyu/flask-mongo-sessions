@@ -1,3 +1,5 @@
+from __future__ import with_statement
+
 from flask import Flask
 from flask import request
 from flask import session

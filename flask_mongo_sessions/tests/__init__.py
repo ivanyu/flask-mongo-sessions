@@ -24,7 +24,8 @@ class ZeroConfCase(BaseTestCase):
         r = self.client.get('/set?d='+test_data)
         cookies = [h[1] for h in r.headers
                    if h[0] == 'Set-Cookie' and h[1].startswith('session=')]
-        session = next(iter(cookies), None)
+
+        session = cookies[0] if cookies else None
         self.assertTrue(session)
         m = re.search('session=(\w{32})', session)
         self.assertTrue(m)
@@ -58,7 +59,7 @@ class ExpirationCase(BaseTestCase):
         r = self.client.get('/setpermanent?d='+data_in)
         cookies = [h[1] for h in r.headers
                    if h[0] == 'Set-Cookie' and h[1].startswith('session=')]
-        session = next(iter(cookies), None)
+        session = cookies[0] if cookies else None
         self.assertTrue(session)
         m = re.search('session=(\w{32})', session)
         self.assertTrue(m)
@@ -122,9 +123,9 @@ class MultipleAppsCase(unittest.TestCase):
                     if h[0] == 'Set-Cookie' and h[1].startswith('session=')]
         cookies3 = [h[1] for h in r3.headers
                     if h[0] == 'Set-Cookie' and h[1].startswith('session=')]
-        session1 = next(iter(cookies1), None)
-        session2 = next(iter(cookies2), None)
-        session3 = next(iter(cookies3), None)
+        session1 = cookies1[0] if cookies1 else None
+        session2 = cookies2[0] if cookies2 else None
+        session3 = cookies3[0] if cookies3 else None
         self.assertTrue(session1)
         self.assertTrue(session2)
         self.assertTrue(session3)
@@ -162,7 +163,7 @@ def suite():
         for base in [ZeroConfCase, ExpirationCase, MultipleAppsCase]:
             def wrapper_get_db_interface(i):
                 return lambda self: i
-            name = '{0}_{1}'.format(base.__name__, interface)
+            name = '%s_%s' % (base.__name__, interface)
             attrs = {'_get_db_interface': wrapper_get_db_interface(interface)}
             cls = type(name, (base,), attrs)
             args = test_loader.getTestCaseNames(cls)

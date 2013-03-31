@@ -13,7 +13,7 @@ class MongoDBSession(CallbackDict, SessionMixin):
         def on_update(this):
             this.modified = True
         if initial:
-            initial = pickle.loads(initial)
+            initial = pickle.loads(str(initial))
         CallbackDict.__init__(self, initial, on_update)
         self.sid = sid
         self.new = new
