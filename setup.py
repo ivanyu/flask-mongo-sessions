@@ -33,5 +33,5 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    test_suite='flask_mongo_sessions.tests',
+    test_suite='flask_mongo_sessions.tests.suite',
 )
