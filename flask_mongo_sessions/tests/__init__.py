@@ -11,7 +11,7 @@ import test_apps
 
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
-        self.app = test_apps.create_app(self._db_interface)
+        self.app = test_apps.create_app(self._get_db_interface())
         self.client = self.app.test_client()
 
 
@@ -87,13 +87,13 @@ class ExpirationCase(BaseTestCase):
 def suite():
     test_loader = unittest.TestLoader()
     suite = test_loader.suiteClass()
-    for interface in ['pymongo', 'mongoengine']:
+    for interface in ['mongoengine', 'pymongo']:
         for base in [ZeroConfCase, ExpirationCase]:
-            def __init__(self, *args, **kwargs):
-                self._db_interface = interface
-                super(self.__class__, self).__init__(*args, **kwargs)
+            def wrapper_get_db_interface(i):
+                return lambda self: i
             name = '{0}_{1}'.format(base.__name__, interface)
-            cls = type(name, (base,), {'__init__': __init__})
+            attrs = {'_get_db_interface': wrapper_get_db_interface(interface)}
+            cls = type(name, (base,), attrs)
             args = test_loader.getTestCaseNames(cls)
             suite.addTests(map(cls, args))
     return suite
