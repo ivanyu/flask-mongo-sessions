@@ -67,8 +67,25 @@ extension.
 Users sessions will be stored in the specified MongoDB database in
 the collection with specified name.
 
+
+Changes
+-------
+
+0.2
+```
+
+- API changed a little
+- Bugfixes
+- MongoEngine support
+
+0.1
+```
+- Initial release
+
+
 Authors and contributors
 ------------------------
+
 The project is started and maintained by Ivan Yurchenko
 (ivan0yurchenko@gmail.com).
 
