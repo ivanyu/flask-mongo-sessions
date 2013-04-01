@@ -3,6 +3,8 @@ flask-mongo-sessions
 ====================
 
 Server-side sessions for Flask with MongoDB.
+
+Documentation: https://flask-mongo-sessions.readthedocs.org/en/latest/
 """
 from setuptools import setup
 
