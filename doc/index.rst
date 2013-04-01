@@ -77,6 +77,7 @@ Changes
 - API changed a little
 - Bugfixes
 - MongoEngine support
+- Tests added
 
 0.1
 ```
