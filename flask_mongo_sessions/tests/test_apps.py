@@ -40,6 +40,15 @@ def create_app(db_interface, app_name='testapp', db_name='__test-db__'):
     def get_session():
         return session.get('data', '')
 
+    @app.route("/unicode/set")
+    def unicode_set():
+        session['foo'] = u'Alpenerstra\xdfe'
+        return 'done'
+
+    @app.route("/unicode/get")
+    def unicode_get():
+        return session['foo']
+
     return app
 
 if __name__ == "__main__":

@@ -49,6 +49,11 @@ class ZeroConfCase(BaseTestCase):
     def test_valid_nonexistent_sid(self):
         self._test_with_sid(uuid.uuid4().hex)
 
+    def test_unicode(self):
+        self.client.get('/unicode/set')
+        r = self.client.get('/unicode/get')
+        self.assertEquals(r.data.decode('utf-8'), u'Alpenerstra\xdfe')
+
 
 class ExpirationCase(BaseTestCase):
     def setUp(self):
