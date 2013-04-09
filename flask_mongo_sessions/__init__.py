@@ -3,6 +3,8 @@ import uuid
 from datetime import datetime
 from datetime import timedelta
 
+from bson.binary import Binary
+
 from werkzeug.datastructures import CallbackDict
 from flask.sessions import SessionMixin
 from flask.sessions import SessionInterface
@@ -19,8 +21,8 @@ class MongoDBSession(CallbackDict, SessionMixin):
         self.new = new
         self.modified = False
 
-    def pickle(self):
-        return pickle.dumps(dict(self))
+    def pack(self):
+        return Binary(pickle.dumps(dict(self)))
 
 
 class MongoDBSessionInterface(SessionInterface):
@@ -80,7 +82,7 @@ class MongoDBSessionInterface(SessionInterface):
         self.__get_collection().update(
             {'_id': session.sid},
             {'$set': {
-                'd': session.pickle(),
+                'd': session.pack(),
                 'exp': session_exp,
             }},
             upsert=True)

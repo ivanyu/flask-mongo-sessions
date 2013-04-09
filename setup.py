@@ -11,7 +11,7 @@ from setuptools import setup
 
 setup(
     name='flask-mongo-sessions',
-    version='0.2',
+    version='0.2.1',
     url='https://github.com/ivanyu/flask-mongo-sessions',
     license='MIT',
     author='Ivan Yurchenko',

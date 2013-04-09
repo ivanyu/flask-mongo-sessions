@@ -71,6 +71,11 @@ the collection with specified name.
 Changes
 -------
 
+0.2.1
+`````
+
+- Bug with Unicode values in session dictionary fixed
+
 0.2
 ```
 

@@ -1,3 +1,6 @@
+0.2.1
+- Bug with Unicode values in session dictionary fixed (issue #8)
+
 0.2
 - API changed a little
 - Bugfixes
