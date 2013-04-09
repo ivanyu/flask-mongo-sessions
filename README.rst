@@ -19,7 +19,7 @@ Installation
 
 Installation of the extension is easy::
 
-    $ pip flask-mongo-sessions
+    $ pip install flask-mongo-sessions
 
 or::
 
