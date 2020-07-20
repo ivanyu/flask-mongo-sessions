@@ -6,6 +6,10 @@ flask-mongo-sessions
 flask-mongo-sessions helps you to add server-side sessions to `Flask`_ with
 `MongoDB`_ storage.
 
+⚠️ This project is not being actively developed by the original author any more. PRs are welcome, though.
+
+⚠️ Please note that Python 3 is not supported now (`issue <https://github.com/ivanyu/flask-mongo-sessions/issues/12>`_).
+
 Requirements
 ------------
 
@@ -69,9 +73,7 @@ the collection with specified name.
 
 Authors and contributors
 ------------------------
-The project is started and maintained by Ivan Yurchenko
-(ivan0yurchenko@gmail.com).
-
+Originally developed by Ivan Yurchenko.
 
 License
 -------
